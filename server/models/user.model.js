@@ -8,15 +8,16 @@ const User = new mongoose.Schema({
 
 const Class = new mongoose.Schema({
     name:{type: String, required: true},
-    email : {type: String, required: true, unique:true},
-    topic: {type: JSON},
+    email : {type: String, required: true},
+    sec :{type: String, required: true}
+    // topic: {type: JSON},
 })
 
 const Topic = new mongoose.Schema({
     classId:{type: String, required: true},
-    class:{type: String, required: true}, 
+    sec:{type: String, required: true}, 
     topicName: {type: String},
-    description:{type:String},
+    questions:{type:JSON},
     date:{type:String}
 })
 const UserData = mongoose.model('UserData', User)

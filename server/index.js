@@ -25,6 +25,7 @@ app.post('/api/register', async (req,res)=>{
         const createClass = await Models.Classes.create({
             name:req.body.name,
             email: req.body.email,
+            sec: "A"
         })
         res.json({status:"ok"})
 
@@ -49,30 +50,7 @@ app.post('/api/login', async (req,res)=>{
     }
 })
 
-app.post('/createTopic',async (req,res)=>{
-    const token = req.headers['x-access-token']
-    try{
-        const decoded = jwt.verify(token, 'dfsdsfddf')
-        const email = decoded.email
-        console.log(req.body.data);
-        // const topicUpdate = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
-        // const addTopic = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
-        const user = await  Models.Classes.findOne({email:email})
-        console.log(user);
-        const topic = await Models.Topics.create({
-            classId:user._id,
-            class:req.body.class,
-            topicName: req.body.topicName,
-            description: req.body.description,
-            date:req.body.date
-        })
-        const updated = await Models.Topics.findOne({email:email})
-        return res.json({status : "ok", latestTopics: updated})
-    }catch(error){
-        console.log(error);
-        res.json({status:'error', error: 'invalid token'})
-    }
-})
+
 
 app.post('/dashboard', async(req,res)=>{
     const user = await Models.Classes.findOneAndUpdate({
@@ -95,6 +73,83 @@ app.get('/dashboard', async (req,res)=>{
         res.json({status:'error', error: 'invalid token'})
     }
 })
+app.get('/topicsCovered/:id', async (req,res)=>{
+    const token = req.headers['x-access-token']
+    try{
+        const decoded = jwt.verify(token, 'dfsdsfddf')
+        const email = decoded.email
+        const user = await  Models.Classes.findOne({email:email})
+        const topics = await Models.Topics.find({classId:user._id,sec: req.params.id})
+        console.log(topics);
+        // console.log(token);
+        return res.json({status : "ok",topics: topics})
+    }catch(error){
+        console.log(error);
+        res.json({status:'error', error: 'invalid token'})
+    }
+})
+
+app.post('/topicsCovered', async (req,res)=>{
+    const token = req.headers['x-access-token']
+    try{
+        const decoded = jwt.verify(token, 'dfsdsfddf')
+        const email = decoded.email
+        const user = await  Models.Classes.findOne({email:email,sec: req.body})
+        const topics = await Models.Topics.updateOne({classId:user._id,$set:{ quote: req.body.quote}})
+        console.log(topics);
+        return res.json({status : "ok",topics: topics})
+    }catch(error){
+        console.log(error);
+        res.json({status:'error', error: 'invalid token'})
+    }
+})
+app.post('/createTopic',async (req,res)=>{
+    const token = req.headers['x-access-token']
+    try{
+        const decoded = jwt.verify(token, 'dfsdsfddf')
+        const email = decoded.email
+        // const topicUpdate = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
+        // const addTopic = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
+        const user = await  Models.Classes.findOne({email:email,sec:req.body.sec})
+        console.log(user);
+        const topic = await Models.Topics.create({
+            classId:user._id,
+            sec:req.body.sec,
+            class:req.body.class,
+            topicName: req.body.topic,
+            questions:req.body.questions,
+            date:req.body.date
+        })
+        const updated = await Models.Topics.findOne({email:email,sec:req.body.sec})
+        return res.json({status : "ok", latestTopics: updated})
+    }catch(error){
+        console.log(error);
+        res.json({status:'error', error: 'invalid token'})
+    }
+})
+app.post('/createClass',async (req,res)=>{
+    const token = req.headers['x-access-token']
+    try{
+        const decoded = jwt.verify(token, 'dfsdsfddf')
+        const email = decoded.email
+        // const topicUpdate = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
+        // const addTopic = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
+        const user = await  Models.Classes.findOne({email:email,sec:req.body.sec})
+        console.log(user);
+        const createClass = await Models.Classes.create({
+            name:req.body.name,
+            email: req.body.email,
+            sec: "A"
+        })
+        const updated = await Models.Topics.findOne({email:email,sec:req.body.sec})
+        return res.json({status : "ok", latestTopics: updated})
+    }catch(error){
+        console.log(error);
+        res.json({status:'error', error: 'invalid token'})
+    }
+})
+
+
 app.listen("3001", ()=>{
     console.log("listening at 3001");
 })
