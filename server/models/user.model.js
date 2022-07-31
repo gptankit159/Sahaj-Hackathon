@@ -9,7 +9,7 @@ const User = new mongoose.Schema({
 const Class = new mongoose.Schema({
     name:{type: String, required: true},
     email : {type: String, required: true},
-    sec :{type: String, required: true}
+    sec :{type: String, required: true, unique:true}
     // topic: {type: JSON},
 })
 
@@ -26,4 +26,4 @@ const Topics = mongoose.model('Topics', Topic)
 
 module.exports = {
     UserData,Classes,Topics
-}
+} 

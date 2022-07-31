@@ -27,10 +27,15 @@ app.post('/api/register', async (req,res)=>{
             email: req.body.email,
             sec: "A"
         })
+        const createClass1 = await Models.Classes.create({
+            name:req.body.name,
+            // email: req.body.email,
+            sec: "B"
+        })
         res.json({status:"ok"})
 
     } catch(error){
-        res.json({status: 'error', error: "Duplicate Email"})
+        res.json({status: 'error', error})
     }
 })
 
@@ -134,12 +139,12 @@ app.post('/createClass',async (req,res)=>{
         const email = decoded.email
         // const topicUpdate = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
         // const addTopic = await  Models.Classes.updateOne({email:email, $set:{topic:req.body.data}})
-        const user = await  Models.Classes.findOne({email:email,sec:req.body.sec})
+        const user = await  Models.UserData.findOne({email:email})
         console.log(user);
         const createClass = await Models.Classes.create({
-            name:req.body.name,
-            email: req.body.email,
-            sec: "A"
+            name:user.name,
+            email: user.email,
+            sec: req.body.sec
         })
         const updated = await Models.Topics.findOne({email:email,sec:req.body.sec})
         return res.json({status : "ok", latestTopics: updated})
